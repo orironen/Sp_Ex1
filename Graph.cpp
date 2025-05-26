@@ -15,27 +15,22 @@ Graph::Graph(int v)
 
 Graph::~Graph() {}
 
-// מימוש קונסטרקטור העתקה
 Graph::Graph(const Graph &other)
 {
-    // העתקת כל הקודקודים
     for (int i = 0; i < other.vertices.size(); ++i)
     {
         vertices.push(other.vertices.get(i));
     }
-    // העתקת כל הקשתות
     for (int i = 0; i < other.edges.size(); ++i)
     {
         edges.push(other.edges.get(i));
     }
 }
 
-// מימוש אופרטור השמה
 Graph &Graph::operator=(const Graph &other)
 {
     if (this != &other)
     {
-        // יצירת רשימות חדשות
         List<Vertex> newVertices;
         List<Edge> newEdges;
         for (int i = 0; i < other.vertices.size(); ++i)
@@ -51,6 +46,7 @@ Graph &Graph::operator=(const Graph &other)
     }
     return *this;
 }
+
 int Graph::getTotalWeight() const
 {
     int sum = 0;
@@ -58,7 +54,7 @@ int Graph::getTotalWeight() const
     {
         sum += edges.get(i).weight;
     }
-    return sum / 2;
+    return sum;
 }
 
 List<Vertex> Graph::getVertices() const
@@ -73,12 +69,10 @@ List<Edge> Graph::getEdges() const
 
 void Graph::addEdge(int src, int dest, int weight)
 {
-    // בדיקה שהאינדקסים תקינים
     if (src < 0 || src >= vertices.size() || dest < 0 || dest >= vertices.size())
     {
         throw std::out_of_range("Vertex index out of range");
     }
-
     Edge e(src, dest, weight);
     edges.push(e);
     vertices.getRef(src).neighbors.push(dest);
@@ -100,7 +94,7 @@ void Graph::removeEdge(int src, int dest)
             break;
         }
     }
-    // הסרת השכנים
+    // Removing neighbors
     Vertex &vsrc = vertices.getRef(src);
     for (int i = 0; i < vsrc.neighbors.size(); ++i)
     {
@@ -133,8 +127,6 @@ void Graph::printGraph()
         }
         std::cout << std::endl;
     }
-    int weight = getTotalWeight();
-    std::cout << "the total weight is: " << weight << std::endl;
 }
 
 int Graph::getWeight(int src, int dest)

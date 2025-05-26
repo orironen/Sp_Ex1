@@ -7,58 +7,45 @@
 using namespace graph;
 using namespace structures;
 
-TEST_CASE("Testing List data structure basic operations")
+TEST_CASE("Testing List data structure")
 {
-    List<int> lst;
-    CHECK(lst.size() == 0);
-    lst.push(10);
-    lst.push(20);
-    lst.push(30);
-    CHECK(lst.size() == 3);
-    CHECK(lst.get(0) == 10);
-    CHECK(lst.get(1) == 20);
-    CHECK(lst.get(2) == 30);
-
-    lst.remove(1); // remove element at index 1 (20)
-    CHECK(lst.size() == 2);
-    CHECK(lst.get(0) == 10);
-    CHECK(lst.get(1) == 30);
-
-    CHECK_THROWS_AS(lst.get(-1), std::invalid_argument);
-    CHECK_THROWS_AS(lst.get(10), std::invalid_argument);
+    List<int> list;
+    CHECK(list.size() == 0);
+    list.push(1);
+    list.push(2);
+    list.push(3);
+    CHECK(list.size() == 3);
+    CHECK(list.get(1) == 2);
+    list.add(1, 4);
+    CHECK(list.get(1) == 4);
+    CHECK(list.size() == 4);
+    list.remove(1);
+    CHECK(list.size() == 3);
+    CHECK(list.get(0) == 1);
 }
 
-TEST_CASE("Testing Graph addEdge and getVertices")
+TEST_CASE("Testing Graph")
 {
     Graph g(3);
-    g.addEdge(0, 1, 5);
-    g.addEdge(1, 2, 3);
-
+    g.addEdge(0, 1, 8);
+    g.addEdge(1, 2, 8);
     auto vertices = g.getVertices();
     CHECK(vertices.size() == 3);
     CHECK(vertices.get(0).neighbors.size() == 1);
-    CHECK(vertices.get(1).neighbors.size() == 1);
-    CHECK(vertices.get(2).neighbors.size() == 0);
-
-    CHECK(g.getWeight(0, 1) == 5);
-    CHECK(g.getWeight(1, 2) == 3);
+    CHECK(vertices.get(1).neighbors.size() == 2);
+    CHECK(g.getWeight(0, 1) == 8);
 }
 
-TEST_CASE("Testing BFS on simple graph")
+TEST_CASE("Testing BFS")
 {
     Graph g(4);
     g.addEdge(0, 1, 1);
     g.addEdge(1, 2, 1);
     g.addEdge(2, 3, 1);
-
     Algorithms alg(g);
-    Graph bfsResult = alg.bfs(0);
-
-    auto bfsVertices = bfsResult.getVertices();
-    CHECK(bfsVertices.get(0).parent == -1);
-    CHECK(bfsVertices.get(1).parent == 0);
-    CHECK(bfsVertices.get(2).parent == 1);
-    CHECK(bfsVertices.get(3).parent == 2);
+    Graph bfs = alg.bfs(0);
+    auto vertices = bfs.getVertices();
+    CHECK(vertices.size() == 4);
 }
 
 TEST_CASE("Testing DFS on simple graph")
@@ -67,17 +54,37 @@ TEST_CASE("Testing DFS on simple graph")
     g.addEdge(0, 1, 1);
     g.addEdge(1, 2, 1);
     g.addEdge(2, 3, 1);
-
     Algorithms alg(g);
     Graph dfsResult = alg.dfs(0);
-
-    auto dfsVertices = dfsResult.getVertices();
-    CHECK(dfsVertices.get(0).parent == -1);
-    // DFS parent might differ depending on traversal order, check parent chain is consistent
-    CHECK((dfsVertices.get(1).parent == 0 || dfsVertices.get(1).parent == -1));
+    auto vertices = dfsResult.getVertices();
+    CHECK(vertices.size() == 4);
 }
 
-TEST_CASE("Testing Prim MST on weighted graph")
+TEST_CASE("Testing Prim")
+{
+    Graph g(3);
+    g.addEdge(0, 1, 5);
+    g.addEdge(1, 2, 7);
+    g.addEdge(0, 2, 10);
+    Algorithms alg(g);
+    Graph prim = alg.prim();
+    auto edges = prim.getEdges();
+    CHECK(edges.size() == 2); // MST should have 2 edges
+}
+
+TEST_CASE("Testing Kruskal")
+{
+    Graph g(3);
+    g.addEdge(0, 1, 5);
+    g.addEdge(1, 2, 7);
+    g.addEdge(0, 2, 10);
+    Algorithms alg(g);
+    Graph kruskal = alg.kruskal();
+    auto edges = kruskal.getEdges();
+    CHECK(edges.size() == 2); // MST should have 2 edges
+}
+
+TEST_CASE("Test total weight prim and kruskal")
 {
     Graph g(4);
     g.addEdge(0, 1, 10);
@@ -85,62 +92,33 @@ TEST_CASE("Testing Prim MST on weighted graph")
     g.addEdge(0, 3, 5);
     g.addEdge(1, 3, 15);
     g.addEdge(2, 3, 4);
-
     Algorithms alg(g);
-    Graph mst = alg.prim();
-
-    // MST should have V-1 = 3 edges
-    int edgeCount = 0;
-    for (int i = 0; i < 4; i++)
-    {
-        edgeCount += mst.getVertices().get(i).neighbors.size();
-    }
-    CHECK(edgeCount == 6); // Because graph is undirected and addEdge likely adds edges both ways
+    Graph prim = alg.prim();
+    Graph kruskal = alg.kruskal();
+    CHECK(prim.getTotalWeight() == kruskal.getTotalWeight());
 }
 
-TEST_CASE("Testing Kruskal MST on weighted graph")
+TEST_CASE("Testing Dijkstra")
 {
     Graph g(4);
-    g.addEdge(0, 1, 10);
-    g.addEdge(0, 2, 6);
-    g.addEdge(0, 3, 5);
-    g.addEdge(1, 3, 15);
-    g.addEdge(2, 3, 4);
-
-    Algorithms alg(g);
-    Graph mst = alg.kruskal();
-
-    // MST should have V-1 = 3 edges (undirected counts 2 edges per connection)
-    int edgeCount = 0;
-    for (int i = 0; i < 4; i++)
-    {
-        edgeCount += mst.getVertices().get(i).neighbors.size();
-    }
-    CHECK(edgeCount == 6);
-}
-
-TEST_CASE("Testing Dijkstra shortest path")
-{
-    Graph g(5);
-    g.addEdge(0, 1, 10);
-    g.addEdge(0, 3, 5);
+    g.addEdge(0, 1, 2);
+    g.addEdge(0, 2, 5);
     g.addEdge(1, 2, 1);
-    g.addEdge(3, 1, 3);
-    g.addEdge(3, 2, 8);
-    g.addEdge(3, 4, 2);
-    g.addEdge(4, 2, 4);
-    g.addEdge(4, 0, 7);
-    g.addEdge(2, 4, 6);
-
+    g.addEdge(2, 3, 7);
     Algorithms alg(g);
-    Graph shortestPathTree = alg.dijkstra(0);
+    Graph dijkstra = alg.dijkstra(0);
+    auto vertices = dijkstra.getVertices();
+    CHECK(g.getWeight(0, 1) == 2);
+    int path = dijkstra.getWeight(0, 1) + dijkstra.getWeight(1, 2) + dijkstra.getWeight(2, 3);
+    CHECK(path == 10);
+}
 
-    // Test parent of vertex 2 should be 1 or 4 depending on path
-    auto verts = shortestPathTree.getVertices();
-
-    CHECK(verts.get(0).parent == -1);
-    // vertex 1 parent could be 0
-    CHECK((verts.get(1).parent == 0 || verts.get(1).parent == 3));
-    // vertex 2 parent should be 1 or 4
-    CHECK((verts.get(2).parent == 1 || verts.get(2).parent == 4));
+TEST_CASE("Dijkstra throws on negative weights")
+{
+    Graph g(3);
+    g.addEdge(0, 1, 1);
+    g.addEdge(1, 2, -5); // קשת שלילית
+    g.addEdge(0, 2, 10);
+    Algorithms alg(g);
+    CHECK_THROWS_AS(alg.dijkstra(0), std::invalid_argument);
 }

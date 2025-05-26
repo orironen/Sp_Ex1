@@ -25,5 +25,8 @@ valgrind: $(TARGET)
 clean:
 	rm -f $(OBJECTS) $(TARGET)
 
-run: $(TARGET)
-	./$(TARGET)
+tests: tests.cpp Algorithm.o Graph.o
+	$(CXX) $(CXXFLAGS) tests.cpp Algorithm.o Graph.o -o tests
+
+test: tests
+	./tests

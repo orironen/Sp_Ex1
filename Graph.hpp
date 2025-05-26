@@ -1,5 +1,3 @@
-// שינויים בקובץ Graph.hpp
-
 #ifndef GRAPH_H
 #define GRAPH_H
 #include "data_structures.hpp"
@@ -40,16 +38,18 @@ namespace graph
     public:
         Graph(int verticesCount);
         ~Graph();
-        // הוספת קונסטרקטור העתקה
+        // Copy constructor
         Graph(const Graph &other);
-        // אופרטור השמה
+        // Assignment operator
         Graph &operator=(const Graph &other);
+        // Returns the total weight of the graph
         int getTotalWeight() const;
         List<Vertex> getVertices() const;
         List<Edge> getEdges() const;
         void addEdge(int src, int dest, int weight = 1);
         void removeEdge(int src, int dest);
         void printGraph();
+        // Returns the weight of the edge between two vertices
         int getWeight(int src, int dest);
     };
 }
