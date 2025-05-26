@@ -39,7 +39,7 @@ namespace structures
         {
             clearList();
         }
-        // Copying a list
+        // copying a list
         void copyList(const List<T> &other)
         {
             if (!other.head)
@@ -54,7 +54,7 @@ namespace structures
                 otherCurr = otherCurr->next;
             }
         }
-        // Clearing the list
+        // clearing the list
         void clearList()
         {
             Node *curr = head;
@@ -252,7 +252,7 @@ namespace structures
             }
             return *this;
         }
-        // Adding an element to the queue at its position
+        // adding an element to the queue at its position
         void insert(T val)
         {
             int i = 0;
@@ -262,7 +262,7 @@ namespace structures
             }
             list.add(i, val);
         }
-        // Removing the smallest element from the queue
+        // removing the smallest element from the queue
         T extractMin()
         {
             if (isEmpty())
@@ -280,11 +280,11 @@ namespace structures
     class UnionFind
     {
     private:
-        List<int> parent; // A list of the parent of each element
-        List<int> rank;   // Height of the tree
+        List<int> parent; // a list of the parent of each element
+        List<int> rank;   // height of the tree
 
     public:
-        // Initially, each element is in its own set
+        // initially, each element is in its own set
         UnionFind(int size)
         {
             for (int i = 0; i < size; ++i)
@@ -305,7 +305,7 @@ namespace structures
             return *this;
         }
 
-        // Finding the root of the element, including path compression
+        // finding the root of the element, including path compression
         int find(int x)
         {
             if (x < 0 || x >= parent.size())
@@ -315,7 +315,7 @@ namespace structures
             if (parent.get(x) != x)
             {
                 int root = find(parent.get(x));
-                parent.set(x, root); // Set the new root as the parent
+                parent.set(x, root); // set the new root as the parent
             }
             return parent.get(x);
         }
@@ -328,10 +328,10 @@ namespace structures
             }
             int rootA = find(a);
             int rootB = find(b);
-            // If they are already in the same set, no need to unite
+            // if they are already in the same set, no need to unite
             if (rootA == rootB)
                 return false;
-            // Otherwise, attach the smaller tree to the larger one
+            // otherwise, attach the smaller tree to the larger one
             if (rank.get(rootA) < rank.get(rootB))
             {
                 parent.set(rootA, rootB);
@@ -341,7 +341,7 @@ namespace structures
                 parent.set(rootB, rootA);
             }
             else
-            // Merging two trees of equal height
+            // merging two trees of equal height
             {
                 parent.set(rootB, rootA);
                 rank.set(rootA, rank.get(rootA) + 1);

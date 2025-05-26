@@ -11,7 +11,7 @@ Graph Algorithms::buildGraph(List<Vertex> vertices)
     for (int i = 0; i < vertices.size(); ++i)
     {
         int parent = vertices.get(i).parent;
-        if (parent != -1) // Check that the parent is valid
+        if (parent != -1) // check that the parent is valid
         {
             res.addEdge(parent, i, 1);
         }
@@ -116,24 +116,24 @@ Graph graph::Algorithms::prim()
     List<Edge> mstEdges;
     Graph mst(V);
     PriorityQueue<Edge> pq; // Priority queue
-    // Start from the first vertex (node 0)
+    // start from the first vertex (node 0)
     vertices.getRef(0).visited = true;
-    // Add all edges from source vertex's neighbors to priority queue
+    // add all edges from source vertex's neighbors to priority queue
     for (int j = 0; j < vertices.get(0).neighbors.size(); ++j)
     {
         int neighbor = vertices.get(0).neighbors.get(j);
         int weight = g.getWeight(0, neighbor);
         pq.insert(Edge(0, neighbor, weight));
     }
-    int visitedCount = 1; // Count how many vertices we have visited
-    // Continue as long as there are edges in the queue and not all vertices are visited
+    int visitedCount = 1; // count how many vertices we have visited
+    // continue as long as there are edges in the queue and not all vertices are visited
     while (!pq.isEmpty() && visitedCount < V)
     {
         Edge minEdge = pq.extractMin();
-        // If both vertices of the edge are already visited – skip
+        // if both vertices of the edge are already visited – skip
         if (vertices.get(minEdge.dest).visited && vertices.get(minEdge.src).visited)
             continue;
-        // Choose the vertex that was not visited yet
+        // choose the vertex that was not visited yet
         int newV;
         if (vertices.get(minEdge.dest).visited)
             newV = minEdge.src;
@@ -142,7 +142,7 @@ Graph graph::Algorithms::prim()
         mstEdges.push(minEdge);
         vertices.getRef(newV).visited = true;
         visitedCount++;
-        // Add to the queue all edges from the new vertex
+        // add to the queue all edges from the new vertex
         Vertex &v = vertices.getRef(newV);
         for (int i = 0; i < v.neighbors.size(); ++i)
         {
@@ -170,29 +170,29 @@ Graph Algorithms::kruskal()
     List<Vertex> vertices = g.getVertices();
 
     Graph mst(vertices.size());
-    // Create a separate set for each vertex
+    // create a separate set for each vertex
     UnionFind uf(vertices.size());
-    // Sort the edges by weight
+    // sort the edges by weight
     PriorityQueue<Edge> sorted;
     for (int i = 0; i < edges.size(); ++i)
     {
         sorted.insert(edges.get(i));
     }
 
-    // Go over all the sorted edges
+    // go over all the sorted edges
     int used = 0;
     while (!sorted.isEmpty())
     {
-        // Take the minimum edge
+        // take the minimum edge
         Edge e = sorted.extractMin();
-        // Check if the vertices are in different sets
+        // check if the vertices are in different sets
         if (uf.find(e.src) != uf.find(e.dest))
         {
             uf.unionSets(e.src, e.dest);          // Merge the sets
             mst.addEdge(e.src, e.dest, e.weight); // Add the edge to the MST
             used++;
         }
-        // A tree with n vertices has exactly n-1 edges
+        // a tree with n vertices has exactly n-1 edges
         if (used == vertices.size() - 1)
         {
             break;
@@ -207,7 +207,7 @@ Graph Algorithms::dijkstra(int src)
     {
         throw std::out_of_range("Source vertex index out of range");
     }
-    // Check if the graph contains any negative edge weights
+    // check if the graph contains any negative edge weights
     for (int i = 0; i < g.getEdges().size(); ++i)
     {
         if (g.getEdges().get(i).weight < 0)
@@ -226,7 +226,7 @@ Graph Algorithms::dijkstra(int src)
         dist.push(INT_MAX);
     }
     dist.set(src, 0);
-    // Choose the vertex with the smallest distance that hasn’t been visited yet
+    // choose the vertex with the smallest distance that hasn’t been visited yet
     for (int i = 0; i < size; ++i)
     {
         int v = -1;
@@ -240,7 +240,7 @@ Graph Algorithms::dijkstra(int src)
             }
         }
         if (v == -1)
-            break; // No more reachable vertices
+            break; // no more reachable vertices
         vertices.getRef(v).visited = true;
         // relax
         List<int> neighbors = vertices.getRef(v).neighbors;
